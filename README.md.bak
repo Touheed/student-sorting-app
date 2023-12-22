@@ -109,9 +109,13 @@ Copy code
   ]
 }
 ]
-### Contributing
+Contributing
 Feel free to contribute to this project. Fork the repository, make your changes, and submit a pull request.
 
+License
+This project is licensed under the MIT License.
 
+vbnet
+Copy code
 
 Make sure to replace placeholders like `your-username` and customize the

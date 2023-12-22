@@ -18,7 +18,8 @@ import com.tech.org.studentsorting.request.StudentSortRQ;
 import com.tech.org.studentsorting.service.DynamicServiceLoader;
 import com.tech.org.studentsorting.service.SortingService;
 
-@Controller
+@Controller()
+@RequestMapping("/api")
 public class StudentController {
 
 	private static final Logger lOGGER = LoggerFactory.getLogger(StudentController.class);
