@@ -25,7 +25,7 @@ This Spring Boot project provides implementations of three sorting algorithms (B
 # Project Structure
 -----------------
 The project structure follows a standard Maven Spring Boot application structure.
-
+ ```bash
 springboot-sort-students/
 |-- src/
 |   |-- main/
@@ -69,10 +69,12 @@ Merge Sort is an efficient,
 Navigate to the project directory:
 
 ### Copy code
+ ```bash
 cd springboot-sort-students
 
 ###  Build the project:
-mvn clean install
+ ```bash
+mvn clean install -Dmaven.test.skip=true
 
 ###  Run the Spring Boot application:
 
