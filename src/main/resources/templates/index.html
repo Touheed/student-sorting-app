@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Sorting Application</title>
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+  <h1>Student Sorting Application</h1>
+
+  <label for="fileInput">Select a text file:</label>
+  <input type="file" id="fileInput" accept=".txt">
+
+  <label for="sortAlgorithm">Select a sorting algorithm:</label>
+  <select id="sortAlgorithm">
+    <option value="bubble">Bubble Sort</option>
+    <option value="heap">Heap Sort</option>
+    <option value="merge">Merge Sort</option>
+  </select>
+
+  <button onclick="processFile()">Sort Within the UI </button>
+  <button onclick="sort()">Sort With Backend Service </button>
+  <h2>Sorted Student Records</h2>
+  <div id="resultTableContainer"></div>
+  <div id="response"></div>
+
+  <script>
+  
+  function sort(){
+	  
+	  const fileInput = document.getElementById('fileInput');
+      const sortAlgorithm = document.getElementById('sortAlgorithm').value;
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a file.');
+        return;
+      }
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      const fileName = fileInput.files[0].name;
+
+      reader.onload = function(e) {
+        const data = e.target.result;
+        const lines = data.split('\n');
+        const records = [];
+
+        for (const line of lines) {
+          const [name, grade] = line.split(',');
+          records.push({ name: name.trim(), grade: parseFloat(grade.trim()) });
+        }
+
+        const startTime = performance.now();
+
+        // Call the selected sorting algorithm
+        const sortedRecords = callService(records, sortAlgorithm,file,fileName);
+
+        const endTime = performance.now();
+        const sortingTime = endTime - startTime;
+
+      //  displayResult(sortedRecords, sortingTime);
+      };
+      reader.readAsText(file);
+  }
+  
+  function callService(records,sortAlgorithm,file,fileName){
+	  console.log("callService invoked");
+	  const startTime = performance.now();
+
+	  const url = 'http://localhost:8080/sort';
+      const data = {
+    	  file: fileName,
+    	  algorithm: sortAlgorithm,
+    	  students:records
+      };
+
+      fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      .then(response => response.text())
+      .then(data => {
+    	//  alert(data)
+          console.log(data);
+          displayResultData(data, startTime);
+          // Handle the response data here
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+  }
+  
+  function displayResultData(data, startTime) {
+	  const endTime = performance.now();
+      const sortingTime = endTime - startTime;
+      var sortedRecords = JSON.parse(data);
+      
+      const resultTableContainer = document.getElementById('resultTableContainer');
+
+      // Build an HTML table to display the sorted records
+      const table = '<table border="1"><thead><tr><th>Name</th><th>Grade</th></tr></thead><tbody>' +
+        sortedRecords.map(record => `<tr><td>${record.name}</td><td>${record.grade}</td></tr>`).join('') +
+        '</tbody></table>';
+
+      // Display the table and sorting time
+      resultTableContainer.innerHTML = `<p>Sorting Time: ${sortingTime.toFixed(2)} milliseconds</p>${table}`;
+    }
+  
+  	function healthCheck(){
+  		const fileInput = document.getElementById('fileInput');
+        const sortAlgorithm = document.getElementById('sortAlgorithm').value;
+
+        if (fileInput.files.length === 0) {
+          alert('Please select a file.');
+          return;
+        }
+        const file = fileInput.files[0];
+  	// Make a fetch API call to the Spring Boot service
+        fetch('http://localhost:8080/healthCheck') // Update the URL with your Spring Boot server URL
+            .then(response => response.text())
+            .then(data => {
+                // Handle the response
+                document.getElementById('response').innerText = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = 'Error fetching data';
+            });
+  	}
+  	
+  	
+    function processFile() {
+
+      const fileInput = document.getElementById('fileInput');
+      const sortAlgorithm = document.getElementById('sortAlgorithm').value;
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a file.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const data = e.target.result;
+        const lines = data.split('\n');
+        const records = [];
+
+        for (const line of lines) {
+          const [name, grade] = line.split(',');
+          records.push({ name: name.trim(), grade: parseFloat(grade.trim()) });
+        }
+
+        const startTime = performance.now();
+
+        // Call the selected sorting algorithm
+        const sortedRecords = sortRecords(records, sortAlgorithm);
+
+        const endTime = performance.now();
+        const sortingTime = endTime - startTime;
+
+        displayResult(sortedRecords, sortingTime);
+      };
+
+      reader.readAsText(file);
+    }
+
+    function sortRecords(records, algorithm) {
+      // Implement the selected sorting algorithm
+      switch (algorithm) {
+        case 'bubble':
+          return bubbleSort(records);
+        case 'heap':
+          return heapSort(records);
+        case 'merge':
+          return mergeSort(records);
+        default:
+          return records;
+      }
+    }
+
+    function bubbleSort(records) {
+      // Implement Bubble Sort
+      // (Please note: This is a basic example; a more optimized version may be needed for larger datasets)
+      return records.sort((a, b) => a.grade - b.grade);
+    }
+
+    function heapSort(records) {
+      // Implement Heap Sort
+      // (This is a placeholder; a complete implementation is more complex)
+      return records.sort((a, b) => a.grade - b.grade);
+    }
+
+    function mergeSort(records) {
+      // Implement Merge Sort
+      // (This is a placeholder; a complete implementation is more complex)
+      return records.sort((a, b) => a.grade - b.grade);
+    }
+
+    function displayResult(sortedRecords, sortingTime) {
+      const resultTableContainer = document.getElementById('resultTableContainer');
+
+      // Build an HTML table to display the sorted records
+      const table = '<table border="1"><thead><tr><th>Name</th><th>Grade</th></tr></thead><tbody>' +
+        sortedRecords.map(record => `<tr><td>${record.name}</td><td>${record.grade}</td></tr>`).join('') +
+        '</tbody></table>';
+
+      // Display the table and sorting time
+      resultTableContainer.innerHTML = `<p>Sorting Time: ${sortingTime.toFixed(2)} milliseconds</p>${table}`;
+    }
+  </script>
+
+</body>
+</html>

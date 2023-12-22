@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sorting Results</title>
+</head>
+<body>
+    <h2>Sorting Results</h2>
+    
+    <p>Number of Records: <span th:text="${numRecords}"></span></p>
+    <p>Sorting Time: <span th:text="${sortingTime}"></span> milliseconds</p>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterate over sorted students using Thymeleaf -->
+            <tr th:each="student : ${students}">
+                <td th:text="${student.name}"></td>
+                <td th:text="${student.grade}"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- Display error message if any -->
+    <p th:if="${error}" style="color: red;" th:text="${error}"></p>
+</body>
+</html>
